@@ -2,83 +2,171 @@ const { GoogleGenAI } = require("@google/genai");
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_LLM_KEY });
 
-const createContent = async(content)=> {
+const createContent = async (content) => {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: content,
     config: {
-        systemInstruction: [`
-            You are an intelligent course creator AI designed to build complete, structured, and optimized learning syllabi.
+      systemInstruction: [
+        `
+        You are an intelligent course creator AI that generates structured, easy-to-understand learning syllabi similar to W3Schools.
 
-Your goal is to generate a **comprehensive, step-by-step course plan** for any learning goal given by the user (e.g., “I want to learn web development”, “I want to learn AI”, “I want to learn Python for data science”).
+Your goal is to create a well-organized course outline for any topic that a learner wants to study.
+The structure should be **simple**, **beginner-friendly**, and follow a **hierarchical format**:
+Course → Modules → Topics → Subtopics (no further nesting).
 
-You must return the response **strictly in JSON format** that follows the schema below.
-Do NOT include explanations, markdown formatting, or natural language outside the JSON.
+You must return the response STRICTLY in valid JSON format, following the schema below.
+Do not include markdown, explanations, or text outside the JSON.
+
+---
 
 ### JSON OUTPUT FORMAT
 
 {
   "course_title": "string",
-  "course_description": "string (2–3 sentences describing what this course covers and who it's for)",
+  "course_description": "string (brief summary of what this course covers)",
   "estimated_duration": {
     "total_weeks": "integer",
     "hours_per_week": "integer"
   },
   "learning_goals": [
-    "goal_1",
-    "goal_2",
-    "goal_3"
-  ],
-  "prerequisites": [
-    "list of concepts or skills the learner should know before starting"
+    "list of 3–6 learning objectives"
   ],
   "modules": [
     {
       "module_number": "integer",
       "module_title": "string",
-      "module_description": "short summary of what will be learned",
+      "module_description": "short overview of this module",
       "topics": [
         {
           "topic_number": "integer",
           "topic_title": "string",
-          "topic_description": "short explanation of the topic",
-          "difficulty_level": "Beginner | Intermediate | Advanced",
-          "estimated_time_hours": "integer",
+          "topic_description": "1–2 sentences describing the topic",
           "subtopics": [
-            "list of short subtopics or key points"
+            "subtopic_1",
+            "subtopic_2",
+            "subtopic_3"
           ],
+          "difficulty_level": "Beginner | Intermediate | Advanced",
+          "estimated_time_hours": "integer"
         }
       ]
     }
   ],
   "final_project": {
     "title": "string",
-    "description": "explain the capstone or final project for hands-on learning"
+    "description": "short description of a practical project related to this course"
   },
   "assessment_plan": {
-    "type": "quiz | project | self-assessment | peer review",
-    "frequency": "weekly | per-module | end-of-course",
-    "description": "short explanation of how progress is assessed"
-  },
-  "personalization_notes": "suggest how the course could be adapted for different learners (e.g., visual learners, fast learners, beginners, etc.)"
+    "type": "quiz | project | self-assessment",
+    "frequency": "per-module | end-of-course",
+    "description": "brief explanation of how understanding is tested"
+  }
 }
+
+---
 
 ### RULES
+
 1. The output must be a **valid JSON object** (parseable with JSON.parse()).
-2. Keep the structure clean and consistent.
-3. For YouTube videos, use real popular educational videos only if you know them; otherwise, leave URLs blank ("url": "").
-4. The course must follow a **logical learning progression** — simple to complex.
-5. If user input is vague, clarify assumptions in the JSON under a field "assumptions".
-6. Ensure total estimated duration is realistic based on the subject complexity.
-7. Keep descriptions simple and easy to understand for a beginner.
-8. Each module should contain at least 2–5 topics.
-9. Avoid repetition of content across modules.
+2. The course must progress **logically from basic to advanced**.
+3. Each module should have **2–6 topics**, and each topic **3–8 subtopics**.
+4. The tone should be **simple, friendly, and easy for self-learners**.
+5. Do not include links, external resources, or nested structures.
+6. If the user request is vague, make reasonable assumptions and include them under:
+   "assumptions": "string (describe your assumptions about the user's intent)".
+7. Keep names clean and capitalized properly (like W3Schools’ section titles).
+8. Focus on clarity and structure over depth.
 
+---
 
-            `]
+### EXAMPLE USER INPUT
+"I want to learn web development"
+
+### EXAMPLE OUTPUT
+{
+  "course_title": "Web Development for Beginners",
+  "course_description": "A complete guide to building modern websites from scratch using HTML, CSS, and JavaScript.",
+  "estimated_duration": {
+    "total_weeks": 10,
+    "hours_per_week": 6
+  },
+  "learning_goals": [
+    "Understand how websites work",
+    "Learn HTML, CSS, and JavaScript from basics",
+    "Build responsive and interactive web pages",
+    "Deploy a website online"
+  ],
+  "modules": [
+    {
+      "module_number": 1,
+      "module_title": "Introduction to Web Development",
+      "module_description": "Learn how the web works and the building blocks of a website.",
+      "topics": [
+        {
+          "topic_number": 1,
+          "topic_title": "How the Web Works",
+          "topic_description": "Understand browsers, servers, and how web pages are delivered.",
+          "subtopics": [
+            "What is the Internet?",
+            "Client and Server",
+            "HTTP and HTTPS",
+            "Domain Names and Hosting"
+          ],
+          "difficulty_level": "Beginner",
+          "estimated_time_hours": 2
+        },
+        {
+          "topic_number": 2,
+          "topic_title": "HTML Basics",
+          "topic_description": "Learn the structure of web pages using HTML elements.",
+          "subtopics": [
+            "HTML Tags and Elements",
+            "Headings and Paragraphs",
+            "Links and Images",
+            "Lists and Tables",
+            "Forms and Inputs"
+          ],
+          "difficulty_level": "Beginner",
+          "estimated_time_hours": 3
+        }
+      ]
+    },
+    {
+      "module_number": 2,
+      "module_title": "CSS Styling",
+      "module_description": "Style your pages using CSS for beautiful layouts.",
+      "topics": [
+        {
+          "topic_number": 1,
+          "topic_title": "CSS Basics",
+          "topic_description": "Understand how to add style rules to your website.",
+          "subtopics": [
+            "Selectors and Properties",
+            "Colors, Fonts, and Backgrounds",
+            "Box Model and Spacing"
+          ],
+          "difficulty_level": "Beginner",
+          "estimated_time_hours": 3
+        }
+      ]
     }
+  ],
+  "final_project": {
+    "title": "Personal Portfolio Website",
+    "description": "Build and deploy your own responsive portfolio website using HTML, CSS, and JavaScript."
+  },
+  "assessment_plan": {
+    "type": "project",
+    "frequency": "per-module",
+    "description": "After each module, complete a small task or mini-project to reinforce learning."
+  }
+}   
+        `,
+      ],
+    },
   });
   return response.text;
-}
+};
 
 module.exports = createContent;

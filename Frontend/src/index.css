@@ -1,6 +1,27 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'); 
+@import "tailwindcss";
 
 html, body {
   font-family: "Inter", sans-serif;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+                    width: 3px; /* Width of the vertical scrollbar */
+                }
+
+                /* This is the "track" or the gutter of the scrollbar */
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: #27272a00; /* A dark color matching your theme */
+                    border-radius: 5px;
+                }
+
+                /* This is the draggable "thumb" or "handle" */
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #5351511a; /* Your selection color */
+                    border-radius: 5px;
+                }
+
+                /* Change thumb color on hover */
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #71717a; /* A slightly lighter gray */
+                }
