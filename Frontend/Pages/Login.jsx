@@ -1,6 +1,10 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
 
 export default function Login() {
+    
+    const [showPassword, setShowPassword] = useState(false)
+
     return (
         <div className="md:w-[450px] bg-[#171717] border border-[#ffffff1a] rounded-lg ">
             <div className="flex flex-col p-6 space-y-1.5 text-left">
@@ -18,9 +22,17 @@ export default function Login() {
                             <label htmlFor="password">Password</label>
                             <Link className="underline">Forgot Password?</Link>
                         </div>
-                        <input className="bg-[#0a0a0a] text-sm border border-[#ffffff1a] rounded-lg px-2 py-2 font-light w-full" type="password" name="password" id="password" autoComplete="current-password" required placeholder="Password" />
+                        <span className="relative">
+                            <input className="bg-[#0a0a0a] text-sm border border-[#ffffff1a] rounded-lg px-2 py-2 font-light w-full" type={showPassword ? "text" : "password"} name="password" id="password" autoComplete="current-password" required placeholder="Password" />
+                            <button onClick={()=>setShowPassword(!showPassword)} type="button" className="absolute top-1/2 transform -translate-y-1/2 right-2 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a1a1a1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye h-4 w-4" aria-hidden="true">
+                                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </span>
                     </div>
-                    <button className="bg-white text-black rounded-lg w-full px-4 py-2 font-semibold text-[14px]">Login</button>
+                    <button className="bg-white text-black rounded-lg w-full px-4 py-2 font-semibold text-[14px] cursor-pointer">Login</button>
                     <div className="relative flex justify-center text-[#a1a1a1] text-sm my-6">
                         <div className="absolute w-full h-[1px] bg-[#ffffff1a]"></div>
                         <div className="absolute top-1/2 transform -translate-y-1/2 bg-[#171717] px-1">Or continue with</div>
